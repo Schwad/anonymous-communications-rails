@@ -2,7 +2,7 @@ class ReservationsController < ApplicationController
   skip_before_filter  :verify_authenticity_token, only: [:accept_or_reject, :connect_guest_to_host_sms, :connect_guest_to_host_voice]
   before_action :set_twilio_params, only: [:connect_guest_to_host_sms, :connect_guest_to_host_voice]
   before_filter :authenticate_user, only: [:index]
-  
+
   # GET /reservations
   def index
     @reservations = current_user.reservations.all
@@ -61,7 +61,7 @@ class ReservationsController < ApplicationController
     elsif @reservation.host.phone_number == @incoming_phone
       @outgoing_number = @reservation.guest.phone_number
     end
-    
+
     response = Twilio::TwiML::Response.new do |r|
       r.Message @message, :to => @outgoing_number
     end
@@ -71,6 +71,7 @@ class ReservationsController < ApplicationController
   # webhook for twilio -> TwiML for voice calls
   def connect_guest_to_host_voice
     # Guest -> Host
+    binding.pry
     if @reservation.guest.phone_number == @incoming_phone
       @outgoing_number = @reservation.host.phone_number
 
